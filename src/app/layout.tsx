@@ -48,12 +48,14 @@ export const metadata: Metadata = {
     title: 'STEMSI Apps Monitor | Status Web SMKN 3 Singaraja',
     description: 'Real-time service status monitoring for SMKN 3 Singaraja (STEMSI). Check the availability of school applications, networks, and services instantly.',
     siteName: 'STEMSI Apps Monitor',
+    images: ['/og-image.png'],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'STEMSI Apps Monitor | Status Web SMKN 3 Singaraja',
     description: 'Real-time service status monitoring for SMKN 3 Singaraja (STEMSI).',
     creator: '@smkn3singaraja',
+    images: ['/og-image.png'],
   },
 };
 
