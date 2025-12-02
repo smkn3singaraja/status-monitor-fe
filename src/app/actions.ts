@@ -1,5 +1,7 @@
 'use server';
 
+import { DowntimeLog } from '@/lib/types';
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
 export async function recordPageViewAction() {
@@ -17,5 +19,28 @@ export async function recordPageViewAction() {
         }
     } catch (error) {
         console.error('Error recording page view:', error);
+    }
+}
+
+export async function getRecentDowntimeAction(serviceName: string, limit: number = 5): Promise<DowntimeLog[]> {
+    try {
+        const response = await fetch(`${API_URL}/api/v1/status/${encodeURIComponent(serviceName)}/downtime?limit=${limit}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            next: { revalidate: 10 },
+        });
+
+        if (!response.ok) {
+            console.error('Failed to fetch downtime logs:', response.statusText);
+            return [];
+        }
+
+        const data = await response.json();
+        return data.data || [];
+    } catch (error) {
+        console.error('Error fetching downtime logs:', error);
+        return [];
     }
 }

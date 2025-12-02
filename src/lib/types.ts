@@ -59,6 +59,13 @@ export interface HistoricalStatusResponse {
     statistics?: Statistics;
 }
 
+export interface DowntimeLog {
+    service_name: string;
+    error: string;
+    timestamp: string;
+    duration: string;
+}
+
 export interface APIResponse<T> {
     success: boolean;
     data?: T;

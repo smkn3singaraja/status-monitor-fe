@@ -1,22 +1,43 @@
 'use client';
 
-import { StatusCheck } from '@/lib/types';
+import { StatusCheck, DowntimeLog } from '@/lib/types';
 import { useState, useMemo } from 'react';
 import { ShieldCheck, AlertCircle, Clock, ChevronDown, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
-
+import { useRouter } from 'next/navigation';
+import { Button } from './ui/button';
+import { getRecentDowntimeAction } from '@/app/actions';
 
 interface StatusCardProps {
     status: StatusCheck;
 }
 
 export function StatusCard({ status }: StatusCardProps) {
+    const router = useRouter();
     const [isExpanded, setIsExpanded] = useState(false);
-    const [loadingLogs, setLoadingLogs] = useState(false); // Placeholder, actual loading logic would be here
-    const [downtimeLogs, setDowntimeLogs] = useState<any[]>([]); // Placeholder, actual logs would be fetched
+    const [loadingLogs, setLoadingLogs] = useState(false);
+    const [downtimeLogs, setDowntimeLogs] = useState<DowntimeLog[]>([]);
+    const [logsLoaded, setLogsLoaded] = useState(false);
+
+    const handleExpand = async () => {
+        const newExpandedState = !isExpanded;
+        setIsExpanded(newExpandedState);
+
+        if (newExpandedState && !logsLoaded) {
+            setLoadingLogs(true);
+            try {
+                const logs = await getRecentDowntimeAction(status.service_name, 2);
+                setDowntimeLogs(logs);
+                setLogsLoaded(true);
+            } catch (error) {
+                console.error("Failed to load logs", error);
+            } finally {
+                setLoadingLogs(false);
+            }
+        }
+    };
 
     const isUp = status.status === 'up';
-
     const statusColor = isUp ? 'bg-green-500' : 'bg-red-500';
 
     const formattedTime = useMemo(() => {
@@ -27,7 +48,7 @@ export function StatusCard({ status }: StatusCardProps) {
         <div className="w-full">
             <div
                 className="bg-card text-card-foreground border border-border rounded-lg p-3 hover:border-ring/50 transition-colors flex flex-col sm:flex-row sm:items-center justify-between group cursor-pointer shadow-sm"
-                onClick={() => setIsExpanded(!isExpanded)}
+                onClick={handleExpand}
             >
                 <div className="flex items-center gap-3 mb-3 sm:mb-0">
                     <div className={`w-2.5 h-2.5 rounded-full ${statusColor} shadow-[0_0_8px_rgba(0,0,0,0.3)]`} />
@@ -42,7 +63,7 @@ export function StatusCard({ status }: StatusCardProps) {
                 <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-4 w-full sm:w-auto">
                     <div className="flex items-center gap-2">
                         {/* Certificate Expiry */}
-                        {status.cert_expiry_days !== undefined && (
+                        {status.cert_expiry_days !== undefined && status.cert_expiry_days > 0 && (
                             <div className={`flex items-center gap-1.5 text-xs px-2 py-1 rounded-md border ${status.cert_expiry_days < 7
                                 ? 'bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20'
                                 : status.cert_expiry_days < 30
@@ -87,7 +108,20 @@ export function StatusCard({ status }: StatusCardProps) {
             {/* Expanded Content - Downtime Logs */}
             {isExpanded && (
                 <div className="mt-2 ml-4 pl-4 border-l-2 border-border space-y-2 animate-in slide-in-from-top-2 duration-200">
-                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pt-2 mb-2">Recent Downtime Logs</h4>
+                    <div className="flex items-center justify-between pt-2 mb-2">
+                        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Recent Downtime Logs</h4>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 text-xs"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                router.push(`/historical?service=${encodeURIComponent(status.service_name)}`);
+                            }}
+                        >
+                            View Details
+                        </Button>
+                    </div>
                     {loadingLogs ? (
                         <div className="flex items-center gap-2 text-sm text-muted-foreground py-2">
                             <Loader2 className="w-3 h-3 animate-spin" />

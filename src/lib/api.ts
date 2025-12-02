@@ -34,6 +34,7 @@ export class StatusMonitorAPIError extends Error {
 // Request configuration
 interface RequestConfig extends RequestInit {
     timeout?: number;
+    next?: { revalidate?: number; tags?: string[] };
 }
 
 // Fetch with timeout
@@ -118,6 +119,7 @@ export class StatusMonitorService {
     static async getLatestStatus(): Promise<LatestStatusResponse> {
         return request<LatestStatusResponse>('/api/v1/status/latest', {
             timeout: 10000, // 10 second timeout
+            next: { revalidate: 60 },
         });
     }
 
@@ -142,6 +144,7 @@ export class StatusMonitorService {
             `/api/v1/status/historical?${searchParams.toString()}`,
             {
                 timeout: 30000, // 30 second timeout for larger datasets
+                next: { revalidate: 60 },
             }
         );
     }

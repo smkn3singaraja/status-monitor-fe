@@ -3,10 +3,12 @@
 import { StatusMonitorService } from '@/lib/api';
 import { HistoricalChart } from '@/components/historical-chart';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { TrendingUp, Calendar } from 'lucide-react';
+import { TrendingUp, Calendar, AlertCircle } from 'lucide-react';
 import { subDays, format } from 'date-fns';
 import { ServiceSidebar } from '@/components/historical/service-sidebar';
 import { DateRangeSelector } from '@/components/historical/date-range-selector';
+import { getRecentDowntimeAction } from '@/app/actions';
+import { DowntimeLog } from '@/lib/types';
 
 // Server Component
 export default async function HistoricalPage({
@@ -26,9 +28,10 @@ export default async function HistoricalPage({
     const days = params.days || '7';
     const daysInt = parseInt(days);
 
-    // Fetch historical data if a service is selected
+    // Fetch historical data and downtime logs in parallel if a service is selected
     let currentData = null;
     let error = null;
+    let downtimeLogs: DowntimeLog[] = [];
     let dateRange = {
         start: subDays(new Date(), daysInt),
         end: new Date(),
@@ -36,14 +39,22 @@ export default async function HistoricalPage({
 
     if (selectedService) {
         try {
-            const historicalData = await StatusMonitorService.getHistoricalStatus({
-                start: dateRange.start.toISOString(),
-                end: dateRange.end.toISOString(),
-                service: selectedService,
-            });
+            const [historicalData, logs] = await Promise.all([
+                StatusMonitorService.getHistoricalStatus({
+                    start: dateRange.start.toISOString(),
+                    end: dateRange.end.toISOString(),
+                    service: selectedService,
+                }),
+                getRecentDowntimeAction(selectedService, 10).catch(err => {
+                    console.error("Failed to load downtime logs", err);
+                    return [];
+                })
+            ]);
+
             if (historicalData && historicalData.length > 0) {
                 currentData = historicalData[0];
             }
+            downtimeLogs = logs;
         } catch (err) {
             error = "Failed to load historical data";
         }
@@ -134,6 +145,40 @@ export default async function HistoricalPage({
                                     serviceName={currentData.service_name}
                                 />
                             </CardContent>
+
+                        </Card>
+
+                        {/* Recent Downtime Logs */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="text-base font-medium flex items-center gap-2">
+                                    <AlertCircle className="w-4 h-4 text-red-500" />
+                                    Recent Downtime Logs
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                {downtimeLogs.length > 0 ? (
+                                    <div className="space-y-4">
+                                        {downtimeLogs.map((log, idx) => (
+                                            <div key={idx} className="flex items-start justify-between border-b border-border pb-4 last:border-0 last:pb-0">
+                                                <div className="space-y-1">
+                                                    <div className="font-medium text-sm text-foreground">{log.error}</div>
+                                                    <div className="text-xs text-muted-foreground">
+                                                        {format(new Date(log.timestamp), 'PPP p')}
+                                                    </div>
+                                                </div>
+                                                <div className="text-xs font-medium px-2 py-1 rounded-full bg-red-500/10 text-red-600 dark:text-red-400">
+                                                    Duration: {log.duration}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-sm text-muted-foreground italic text-center py-4">
+                                        No recent downtime logs found for this period.
+                                    </div>
+                                )}
+                            </CardContent>
                         </Card>
 
                         {/* Date Range Display */}
@@ -151,6 +196,6 @@ export default async function HistoricalPage({
                     </div>
                 )}
             </div>
-        </div>
+        </div >
     );
 }
