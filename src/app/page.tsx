@@ -20,10 +20,7 @@ async function getTotalViews() {
   }
 }
 
-export const metadata = {
-  title: 'STEMSI Apps Monitor',
-  description: 'Service status monitoring',
-};
+
 
 function StatusSkeleton() {
   return (

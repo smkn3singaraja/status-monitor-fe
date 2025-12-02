@@ -12,8 +12,49 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'STEMSI Apps Monitor',
-  description: 'Service monitoring dashboard',
+  title: {
+    default: 'STEMSI Apps Monitor | Status Web SMKN 3 Singaraja',
+    template: '%s | STEMSI Apps Monitor',
+  },
+  description: 'Real-time service status monitoring for SMKN 3 Singaraja (STEMSI). Check the availability of school applications, networks, and services instantly.',
+  keywords: [
+    'stemsi status',
+    'status web smkn3singaraja',
+    'smkn 3 singaraja',
+    'stemsi apps',
+    'uptime monitor',
+    'service status',
+    'network availability',
+    'dedan labs'
+  ],
+  authors: [{ name: 'Dedan Labs' }],
+  creator: 'Dedan Labs',
+  publisher: 'SMKN 3 Singaraja',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'id_ID',
+    url: 'https://status.smkn3singaraja.sch.id',
+    title: 'STEMSI Apps Monitor | Status Web SMKN 3 Singaraja',
+    description: 'Real-time service status monitoring for SMKN 3 Singaraja (STEMSI). Check the availability of school applications, networks, and services instantly.',
+    siteName: 'STEMSI Apps Monitor',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'STEMSI Apps Monitor | Status Web SMKN 3 Singaraja',
+    description: 'Real-time service status monitoring for SMKN 3 Singaraja (STEMSI).',
+    creator: '@smkn3singaraja',
+  },
 };
 
 export default function RootLayout({
