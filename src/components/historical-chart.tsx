@@ -66,8 +66,8 @@ export function HistoricalChart({ dataPoints, serviceName }: HistoricalChartProp
                             labelFormatter={(timestamp) => formatDate(new Date(timestamp as number))}
                             formatter={(value: number) => [`${value.toFixed(2)}ms`, 'Response Time']}
                             contentStyle={{
-                                backgroundColor: 'hsl(var(--background))',
-                                border: '1px solid hsl(var(--border))',
+                                backgroundColor: 'var(--background)',
+                                border: '1px solid var(--border)',
                                 borderRadius: '8px',
                             }}
                         />
@@ -75,7 +75,7 @@ export function HistoricalChart({ dataPoints, serviceName }: HistoricalChartProp
                         <Line
                             type="monotone"
                             dataKey="responseTime"
-                            stroke="hsl(var(--primary))"
+                            stroke="var(--primary)"
                             strokeWidth={2}
                             dot={false}
                             name="Response Time"
@@ -113,8 +113,8 @@ export function HistoricalChart({ dataPoints, serviceName }: HistoricalChartProp
                             labelFormatter={(timestamp) => formatDate(new Date(timestamp as number))}
                             formatter={(value: number) => [value === 1 ? 'Up' : 'Down', 'Status']}
                             contentStyle={{
-                                backgroundColor: 'hsl(var(--background))',
-                                border: '1px solid hsl(var(--border))',
+                                backgroundColor: 'var(--background)',
+                                border: '1px solid var(--border)',
                                 borderRadius: '8px',
                             }}
                         />
