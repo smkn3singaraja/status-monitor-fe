@@ -33,6 +33,9 @@ export function ServiceSidebar({ services, selectedService }: ServiceSidebarProp
     // Sort services within groups
     Object.keys(groupedServices).forEach(group => {
         groupedServices[group].sort((a, b) => {
+            if (a.order !== b.order) {
+                return (a.order || 999) - (b.order || 999);
+            }
             const subA = a.sub_group || '';
             const subB = b.sub_group || '';
             if (subA !== subB) return subA.localeCompare(subB);
@@ -62,8 +65,8 @@ export function ServiceSidebar({ services, selectedService }: ServiceSidebarProp
                                 key={service.service_name}
                                 onClick={() => handleSelectService(service.service_name)}
                                 className={`w-full text-left px-3 py-2 rounded-md text-sm transition-all duration-200 ${selectedService === service.service_name
-                                        ? 'bg-card text-primary font-semibold shadow-sm ring-1 ring-border'
-                                        : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                                    ? 'bg-card text-primary font-semibold shadow-sm ring-1 ring-border'
+                                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                                     }`}
                             >
                                 <div className="flex items-center gap-2">

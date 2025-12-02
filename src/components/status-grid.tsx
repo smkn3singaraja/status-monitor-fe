@@ -17,7 +17,15 @@ export function StatusGrid({ services }: StatusGridProps) {
     }
 
     // Group services by group name, then by sub-group
-    const groupedServices = services.reduce((acc, service) => {
+    // Sort services: Order first, then Name
+    const sortedServices = [...services].sort((a, b) => {
+        if (a.order !== b.order) {
+            return (a.order || 999) - (b.order || 999);
+        }
+        return a.service_name.localeCompare(b.service_name);
+    });
+
+    const groupedServices = sortedServices.reduce((acc, service) => {
         const group = service.group || 'Other Services';
         if (!acc[group]) {
             acc[group] = {};

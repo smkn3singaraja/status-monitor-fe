@@ -17,8 +17,9 @@ export interface StatusCheck {
     description?: string;
     group: string;
     sub_group: string;
+    order: number;
     server_label: string;
-    status: ServiceStatus;
+    status: 'up' | 'down';
     response_time_ms: number;
     status_code?: number;
     error_message?: string;
