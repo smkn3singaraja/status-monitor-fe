@@ -4,6 +4,7 @@ import { StatusCheck } from '@/lib/types';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Menu } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 
 interface ServiceSidebarProps {
     services: StatusCheck[];
@@ -14,10 +15,13 @@ export function ServiceSidebar({ services, selectedService }: ServiceSidebarProp
     const router = useRouter();
     const searchParams = useSearchParams();
 
+    const [isOpen, setIsOpen] = useState(false);
+
     const handleSelectService = (serviceName: string) => {
         const params = new URLSearchParams(searchParams.toString());
         params.set('service', serviceName);
         router.push(`/historical?${params.toString()}`);
+        setIsOpen(false);
     };
 
     // Group services
@@ -86,7 +90,7 @@ export function ServiceSidebar({ services, selectedService }: ServiceSidebarProp
         <>
             {/* Mobile Sidebar Trigger */}
             <div className="lg:hidden mb-4">
-                <Sheet>
+                <Sheet open={isOpen} onOpenChange={setIsOpen}>
                     <SheetTrigger asChild>
                         <button className="flex items-center gap-2 px-4 py-2 bg-background border border-border rounded-md shadow-sm text-sm font-medium hover:bg-accent hover:text-accent-foreground">
                             <Menu className="w-4 h-4" />
