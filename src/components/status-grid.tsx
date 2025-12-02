@@ -1,11 +1,32 @@
+'use client';
+
 import { StatusCheck } from '@/lib/types';
 import { StatusCard } from './status-card';
+import { useState } from 'react';
+import { Button } from './ui/button';
+import { ChevronUp } from 'lucide-react';
 
 interface StatusGridProps {
     services: StatusCheck[];
 }
 
 export function StatusGrid({ services }: StatusGridProps) {
+    const [expandedServices, setExpandedServices] = useState<Set<string>>(new Set());
+
+    const toggleService = (serviceName: string) => {
+        const newSet = new Set(expandedServices);
+        if (newSet.has(serviceName)) {
+            newSet.delete(serviceName);
+        } else {
+            newSet.add(serviceName);
+        }
+        setExpandedServices(newSet);
+    };
+
+    const collapseAll = () => {
+        setExpandedServices(new Set());
+    };
+
     if (services.length === 0) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
@@ -50,16 +71,32 @@ export function StatusGrid({ services }: StatusGridProps) {
     });
 
     return (
-        <div className="space-y-10">
+        <div className="space-y-10 relative">
+            {expandedServices.size > 0 && (
+                <div className="fixed bottom-6 right-6 z-50 animate-in fade-in slide-in-from-bottom-4 duration-300">
+                    <Button
+                        onClick={collapseAll}
+                        className="shadow-lg rounded-full"
+                        size="sm"
+                    >
+                        <ChevronUp className="w-4 h-4 mr-2" />
+                        Collapse All ({expandedServices.size})
+                    </Button>
+                </div>
+            )}
+
             {sortedGroups.map((group) => {
                 const subGroups = groupedServices[group];
                 const sortedSubGroups = Object.keys(subGroups).sort();
 
                 return (
                     <div key={group} className="space-y-6">
-                        <h2 className="text-xl font-bold text-foreground border-b border-border pb-2">
-                            {group}
-                        </h2>
+                        <div className="flex items-center justify-between border-b border-border pb-2">
+                            <h2 className="text-xl font-bold text-foreground">
+                                {group}
+                            </h2>
+                            {/* Optional: Add group-level collapse here if needed */}
+                        </div>
 
                         <div className="space-y-8">
                             {sortedSubGroups.map((subGroup) => (
@@ -73,7 +110,12 @@ export function StatusGrid({ services }: StatusGridProps) {
 
                                     <div className="space-y-2">
                                         {subGroups[subGroup].map((service, index) => (
-                                            <StatusCard key={`${service.service_name}-${index}`} status={service} />
+                                            <StatusCard
+                                                key={`${service.service_name}-${index}`}
+                                                status={service}
+                                                isExpanded={expandedServices.has(service.service_name)}
+                                                onToggle={() => toggleService(service.service_name)}
+                                            />
                                         ))}
                                     </div>
                                 </div>
