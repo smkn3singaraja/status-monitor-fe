@@ -49,7 +49,10 @@ export function StatusCard({ status, isExpanded, onToggle }: StatusCardProps) {
     return (
         <div className="w-full">
             <div
-                className="bg-card text-card-foreground border border-border rounded-lg p-3 hover:border-ring/50 transition-colors flex flex-col sm:flex-row sm:items-center justify-between group cursor-pointer shadow-sm"
+                className={`bg-card text-card-foreground border rounded-lg p-3 transition-all flex flex-col sm:flex-row sm:items-center justify-between group cursor-pointer shadow-sm ${isExpanded
+                        ? 'border-primary ring-1 ring-primary shadow-md'
+                        : 'border-border hover:border-ring/50'
+                    }`}
                 onClick={onToggle}
             >
                 <div className="flex items-center gap-3 mb-3 sm:mb-0">
