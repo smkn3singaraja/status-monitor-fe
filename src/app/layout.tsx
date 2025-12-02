@@ -30,14 +30,17 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white text-[10px] font-medium py-1 text-center tracking-wide">
+          <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white text-[10px] font-medium py-1 text-center tracking-wide animate-gradient">
             Crafted by <strong className="font-bold">Dedan Labs</strong> hosted on <strong className="font-bold">nbtrisna server</strong>
           </div>
           <Navigation />
           <PageViewTracker />
-          <main className="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+          <main className="pt-8 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-[calc(100vh-140px)]">
             {children}
           </main>
+          <footer className="w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 animate-gradient text-white py-1.5 text-center text-[10px] font-medium tracking-wide shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+            STEMSI Monitor © {new Date().getFullYear()} • Built for Reliability
+          </footer>
         </ThemeProvider>
       </body>
     </html>
