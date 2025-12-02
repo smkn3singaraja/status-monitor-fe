@@ -7,6 +7,7 @@ import {
     isSuccessResponse,
     API_ERROR_CODES,
 } from './types';
+import { decryptResponse } from './crypto'; // Added import for decryptResponse
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
@@ -82,7 +83,16 @@ async function request<T>(
             );
         }
 
-        const data: APIResponse<T> = await response.json();
+        const data: any = await response.json();
+
+        // Check if response is encrypted
+        if (data.key && data.iv && data.data) {
+            const decrypted = await decryptResponse(data);
+            if (!decrypted.success) {
+                throw StatusMonitorAPIError.networkError(decrypted.error?.message || 'Unknown API Error');
+            }
+            return decrypted.data as unknown as T;
+        }
 
         if (isSuccessResponse(data)) {
             return data.data;

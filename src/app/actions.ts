@@ -22,6 +22,8 @@ export async function recordPageViewAction() {
     }
 }
 
+import { decryptResponse } from '@/lib/crypto';
+
 export async function getRecentDowntimeAction(serviceName: string, limit: number = 5): Promise<DowntimeLog[]> {
     try {
         const response = await fetch(`${API_URL}/api/v1/status/${encodeURIComponent(serviceName)}/downtime?limit=${limit}`, {
@@ -38,6 +40,17 @@ export async function getRecentDowntimeAction(serviceName: string, limit: number
         }
 
         const data = await response.json();
+
+        // Check if response is encrypted
+        if (data.key && data.iv && data.data) {
+            const decrypted = await decryptResponse(data);
+            if (!decrypted.success) {
+                console.error('API Error (Decrypted):', decrypted.error);
+                return [];
+            }
+            return decrypted.data || [];
+        }
+
         return data.data || [];
     } catch (error) {
         console.error('Error fetching downtime logs:', error);
