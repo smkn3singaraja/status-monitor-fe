@@ -7,10 +7,9 @@ interface EncryptedResponse {
 }
 
 export async function decryptResponse(encrypted: EncryptedResponse): Promise<any> {
-    const privateKeyPem = process.env.API_PRIVATE_KEY;
-    if (!privateKeyPem) {
-        throw new Error('API_PRIVATE_KEY is not defined');
-    }
+    const privateKeyPem = `-----BEGIN PRIVATE KEY-----
+MC4CAQAwBQYDK2VuBCIEIKh3f6SloHjgEvF0kIi5ckvtXOkRATCgBhV7hGJGmPd7
+-----END PRIVATE KEY-----`;
 
     try {
         // 1. Load Static Private Key
