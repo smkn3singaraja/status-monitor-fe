@@ -95,7 +95,7 @@ async function request<T>(
         }
 
         if (isSuccessResponse(data)) {
-            return data.data;
+            return data.data as unknown as T;
         }
 
         if (data.error) {
