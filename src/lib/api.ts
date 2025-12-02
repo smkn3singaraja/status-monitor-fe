@@ -86,7 +86,7 @@ async function request<T>(
         const data: any = await response.json();
 
         // Check if response is encrypted
-        if (data.key && data.iv && data.data) {
+        if (data.ephemPublicKey && data.iv && data.data) {
             const decrypted = await decryptResponse(data);
             if (!decrypted.success) {
                 throw StatusMonitorAPIError.networkError(decrypted.error?.message || 'Unknown API Error');
@@ -120,18 +120,23 @@ async function request<T>(
     }
 }
 
+import { unstable_cache } from 'next/cache';
+
 // Service layer with proper separation
 export class StatusMonitorService {
     /**
      * Get the latest status of all monitored services
-     * Uses caching on the backend (60s default TTL)
+     * Uses caching on the frontend (60s default TTL)
      */
-    static async getLatestStatus(): Promise<LatestStatusResponse> {
-        return request<LatestStatusResponse>('/api/v1/status/latest', {
-            timeout: 10000, // 10 second timeout
-            next: { revalidate: 60 },
-        });
-    }
+    static getLatestStatus = unstable_cache(
+        async (): Promise<LatestStatusResponse> => {
+            return request<LatestStatusResponse>('/api/v1/status/latest', {
+                timeout: 10000,
+            });
+        },
+        ['latest-status'],
+        { revalidate: 60, tags: ['status'] }
+    );
 
     /**
      * Get historical status data with optional filtering
@@ -150,13 +155,20 @@ export class StatusMonitorService {
         if (params.service) searchParams.append('service', params.service);
         if (params.limit) searchParams.append('limit', params.limit.toString());
 
-        return request<HistoricalStatusResponse[]>(
-            `/api/v1/status/historical?${searchParams.toString()}`,
-            {
-                timeout: 30000, // 30 second timeout for larger datasets
-                next: { revalidate: 60 },
-            }
-        );
+        const cacheKey = `historical-${params.service || 'all'}-${params.start}-${params.end || 'now'}`;
+
+        return unstable_cache(
+            async () => {
+                return request<HistoricalStatusResponse[]>(
+                    `/api/v1/status/historical?${searchParams.toString()}`,
+                    {
+                        timeout: 30000,
+                    }
+                );
+            },
+            [cacheKey],
+            { revalidate: 60, tags: ['historical'] }
+        )();
     }
 
     /**
