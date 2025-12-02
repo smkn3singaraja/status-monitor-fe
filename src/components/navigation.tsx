@@ -3,11 +3,22 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
-import { Activity } from 'lucide-react';
+import { Activity, Menu, Sun, Moon, Monitor } from 'lucide-react';
 import { ModeToggle } from '@/components/mode-toggle';
+import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useTheme } from "next-themes";
 
 export function Navigation() {
     const pathname = usePathname();
+    const { setTheme, theme } = useTheme();
 
     const links = [
         { href: '/', label: 'Status' },
@@ -34,7 +45,8 @@ export function Navigation() {
                         </div>
                     </Link>
 
-                    <div className="flex items-center gap-1">
+                    {/* Desktop Navigation */}
+                    <div className="hidden md:flex items-center gap-1">
                         {links.map((link) => {
                             const isActive = pathname === link.href;
                             return (
@@ -53,6 +65,58 @@ export function Navigation() {
                         <div className="ml-2 pl-2 border-l border-border">
                             <ModeToggle />
                         </div>
+                    </div>
+
+                    {/* Mobile Navigation */}
+                    <div className="md:hidden">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline" size="icon">
+                                    <Menu className="h-5 w-5" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-56">
+                                <DropdownMenuLabel>Navigation</DropdownMenuLabel>
+                                {links.map((link) => (
+                                    <DropdownMenuItem key={link.href} asChild>
+                                        <Link
+                                            href={link.href}
+                                            className={`w-full cursor-pointer ${pathname === link.href ? 'bg-accent' : ''}`}
+                                        >
+                                            {link.label}
+                                        </Link>
+                                    </DropdownMenuItem>
+                                ))}
+                                <DropdownMenuSeparator />
+                                <DropdownMenuLabel>Theme</DropdownMenuLabel>
+                                <div className="p-2 flex gap-1 bg-muted/50 rounded-md mx-2">
+                                    <Button
+                                        variant={theme === 'light' ? 'default' : 'ghost'}
+                                        size="sm"
+                                        className="flex-1 h-8 px-0"
+                                        onClick={() => setTheme('light')}
+                                    >
+                                        <Sun className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                        variant={theme === 'dark' ? 'default' : 'ghost'}
+                                        size="sm"
+                                        className="flex-1 h-8 px-0"
+                                        onClick={() => setTheme('dark')}
+                                    >
+                                        <Moon className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                        variant={theme === 'system' ? 'default' : 'ghost'}
+                                        size="sm"
+                                        className="flex-1 h-8 px-0"
+                                        onClick={() => setTheme('system')}
+                                    >
+                                        <Monitor className="h-4 w-4" />
+                                    </Button>
+                                </div>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                 </div>
             </div>
