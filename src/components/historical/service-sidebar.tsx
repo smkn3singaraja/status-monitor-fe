@@ -88,7 +88,7 @@ export function ServiceSidebar({ services, selectedService }: ServiceSidebarProp
             <div className="lg:hidden mb-4">
                 <Sheet>
                     <SheetTrigger asChild>
-                        <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-md shadow-sm text-sm font-medium hover:bg-gray-50">
+                        <button className="flex items-center gap-2 px-4 py-2 bg-background border border-border rounded-md shadow-sm text-sm font-medium hover:bg-accent hover:text-accent-foreground">
                             <Menu className="w-4 h-4" />
                             Select Service
                         </button>
