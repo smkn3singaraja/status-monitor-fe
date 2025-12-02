@@ -4,6 +4,7 @@ import './globals.css';
 import { Navigation } from '@/components/navigation';
 import { ThemeProvider } from "@/components/theme-provider"
 import { PageViewTracker } from '@/components/page-view-tracker';
+import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({
   subsets: ['latin'],
@@ -85,6 +86,7 @@ export default function RootLayout({
             STEMSI Monitor © {new Date().getFullYear()} • Built for Reliability
           </footer>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
