@@ -82,8 +82,18 @@ export default function RootLayout({
           <main className="flex-1 pt-8 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
             {children}
           </main>
-          <footer className="w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 animate-gradient text-white py-1.5 text-center text-[10px] font-medium tracking-wide shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
-            STEMSI Monitor © {new Date().getFullYear()} • Built for Reliability
+          <footer className="w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 animate-gradient text-white py-2 text-center text-[12px] font-medium tracking-wide shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+            <div className="flex flex-col items-center gap-1">
+              <span>STEMSI Monitor © {new Date().getFullYear()} • Built for Reliability</span>
+              <a
+                href="https://wa.me/6285646505614?text=%5BAMERTA%20SUPPORT%5D%0A%0A*ISI%20DATA%20DIRI%20DI%20BAWAH*%20%0ANama%3A%20%0ANISN%3A%0ANIS%3A%0AKelas%3A%0A%0A%20_Tulis%20pesan%20anda%20disini_%0A%0ANB%3A%20Tambahkan%20screenshot%20(jika%20mengalami%20kendala)%20agar%20admin%20dapat%20menyelesaikan%20masalah%20lebih%20cepat"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-gray-200 flex items-center gap-1"
+              >
+                Contact Support
+              </a>
+            </div>
           </footer>
         </ThemeProvider>
         <Analytics />

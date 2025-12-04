@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useTheme } from "next-themes";
 
+import { IssuesBadge } from '@/components/issues-badge';
+
 export function Navigation() {
     const pathname = usePathname();
     const { setTheme, theme } = useTheme();
@@ -62,21 +64,11 @@ export function Navigation() {
                                 </Link>
                             );
                         })}
-                        <Button
-                            variant="default"
-                            size="sm"
-                            className="ml-2 gap-2 bg-green-600 hover:bg-green-700 text-white"
-                            asChild
-                        >
-                            <a
-                                href="https://wa.me/6285646505614?text=%5BAMERTA%20SUPPORT%5D%0A%0A*ISI%20DATA%20DIRI%20DI%20BAWAH*%20%0ANama%3A%20%0ANISN%3A%0ANIS%3A%0AKelas%3A%0A%0A%20_Tulis%20pesan%20anda%20disini_%0A%0ANB%3A%20Tambahkan%20screenshot%20(jika%20mengalami%20kendala)%20agar%20admin%20dapat%20menyelesaikan%20masalah%20lebih%20cepat"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                <MessageCircle className="h-4 w-4" />
-                                Contact Support
-                            </a>
-                        </Button>
+
+                        <div className="mx-2">
+                            <IssuesBadge />
+                        </div>
+
                         <div className="ml-2 pl-2 border-l border-border">
                             <ModeToggle />
                         </div>
@@ -84,21 +76,6 @@ export function Navigation() {
 
                     {/* Mobile Navigation */}
                     <div className="md:hidden flex items-center gap-1">
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-green-600 dark:text-green-400 gap-2"
-                            asChild
-                        >
-                            <a
-                                href="https://wa.me/6285646505614?text=%5BAMERTA%20SUPPORT%5D%0A%0A*ISI%20DATA%20DIRI%20DI%20BAWAH*%20%0ANama%3A%20%0ANISN%3A%0ANIS%3A%0AKelas%3A%0A%0A%20_Tulis%20pesan%20anda%20disini_%0A%0ANB%3A%20Tambahkan%20screenshot%20(jika%20mengalami%20kendala)%20agar%20admin%20dapat%20menyelesaikan%20masalah%20lebih%20cepat"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                <Headset className="h-4 w-4" />
-                                <span className="font-medium">Support</span>
-                            </a>
-                        </Button>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="outline" size="icon">
@@ -117,6 +94,9 @@ export function Navigation() {
                                         </Link>
                                     </DropdownMenuItem>
                                 ))}
+                                <div className="px-2 py-1.5">
+                                    <IssuesBadge />
+                                </div>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuLabel>Theme</DropdownMenuLabel>
                                 <div className="p-2 flex gap-1 bg-muted/50 rounded-md mx-2">

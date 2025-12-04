@@ -179,6 +179,22 @@ export class StatusMonitorService {
         const data = await this.getLatestStatus();
         return Array.from(new Set(data.services.map(s => s.service_name)));
     }
+    /**
+     * Get global recent downtime logs
+     * @param limit Maximum number of logs to return
+     * @param days Number of days to look back
+     */
+    static async getGlobalDowntime(limit: number = 100, days: number = 7): Promise<any[]> {
+        return unstable_cache(
+            async () => {
+                return request<any[]>(`/api/v1/status/downtime/history?limit=${limit}&days=${days}`, {
+                    timeout: 10000,
+                });
+            },
+            [`global-downtime-${limit}-${days}`],
+            { revalidate: 30, tags: ['downtime'] }
+        )();
+    }
 }
 
 // Re-export for backwards compatibility and convenience
