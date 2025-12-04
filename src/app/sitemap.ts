@@ -14,5 +14,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
             changeFrequency: 'daily',
             priority: 0.8,
         },
+        {
+            url: 'https://status.smkn3singaraja.sch.id/issues',
+            lastModified: new Date(),
+            changeFrequency: 'hourly',
+            priority: 0.9,
+        },
     ];
 }

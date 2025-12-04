@@ -58,6 +58,10 @@ export const metadata: Metadata = {
     creator: '@smkn3singaraja',
     images: ['/og-image.png'],
   },
+  metadataBase: new URL('https://status.smkn3singaraja.sch.id'),
+  verification: {
+    google: 'google-site-verification=YOUR_VERIFICATION_CODE', // Replace with your actual code
+  },
 };
 
 export default function RootLayout({
