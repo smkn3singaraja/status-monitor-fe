@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 export function IssuesFilter() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const currentDays = searchParams.get('days') || '7';
+    const currentDays = searchParams.get('days') || '3';
 
     const handleValueChange = (value: string) => {
         const params = new URLSearchParams(searchParams);

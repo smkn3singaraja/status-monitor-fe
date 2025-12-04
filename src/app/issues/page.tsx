@@ -15,7 +15,7 @@ export const revalidate = 30;
 
 export default async function IssuesPage(props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
     const searchParams = await props.searchParams;
-    const days = typeof searchParams.days === 'string' ? parseInt(searchParams.days) : 7;
+    const days = typeof searchParams.days === 'string' ? parseInt(searchParams.days) : 3;
     const logs = await getGlobalDowntimeAction(100, days);
 
     return (
