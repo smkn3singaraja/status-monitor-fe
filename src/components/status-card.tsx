@@ -6,7 +6,8 @@ import { ShieldCheck, AlertCircle, Clock, ChevronDown, Loader2, History, ArrowRi
 import { format } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import { Button } from './ui/button';
-import { getRecentDowntimeClient } from '@/lib/api-client';
+import { getRecentDowntimeClient, getHistoricalStatusClient } from '@/lib/api-client';
+import { subDays } from 'date-fns';
 
 interface StatusCardProps {
     status: StatusCheck;
@@ -45,6 +46,17 @@ export function StatusCard({ status, isExpanded, onToggle }: StatusCardProps) {
     const formattedTime = useMemo(() => {
         return new Date(status.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }, [status.timestamp]);
+
+    const prefetchHistory = () => {
+        const end = new Date();
+        const start = subDays(end, 7);
+        getHistoricalStatusClient({
+            start: start.toISOString(),
+            end: end.toISOString(),
+            service: status.service_name,
+            limit: 100
+        });
+    };
 
     return (
         <div className="w-full">
@@ -111,7 +123,6 @@ export function StatusCard({ status, isExpanded, onToggle }: StatusCardProps) {
             </div>
 
             {/* Expanded Content - Downtime Logs */}
-            {/* Expanded Content - Downtime Logs */}
             {isExpanded && (
                 <div className="mt-3 pt-2 border-t border-border/50 space-y-3 animate-in slide-in-from-top-2 duration-200">
                     <div className="flex items-center justify-between px-1">
@@ -127,6 +138,7 @@ export function StatusCard({ status, isExpanded, onToggle }: StatusCardProps) {
                                 e.stopPropagation();
                                 router.push(`/historical?service=${encodeURIComponent(status.service_name)}`);
                             }}
+                            onMouseEnter={prefetchHistory}
                         >
                             View All History
                             <ArrowRight className="w-3 h-3 ml-1" />

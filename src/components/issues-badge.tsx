@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { AlertTriangle } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { getGlobalDowntimeAction } from '@/app/actions';
+import { getGlobalDowntimeClient } from '@/lib/api-client';
 
 export function IssuesBadge() {
     const [issueCount, setIssueCount] = useState<number>(0);
@@ -12,7 +12,7 @@ export function IssuesBadge() {
     useEffect(() => {
         const fetchIssues = async () => {
             try {
-                const logs = await getGlobalDowntimeAction(100, 3);
+                const logs = await getGlobalDowntimeClient(100, 3);
                 setIssueCount(logs.length);
             } catch (error) {
                 console.error('Failed to fetch issues count:', error);
@@ -27,6 +27,10 @@ export function IssuesBadge() {
         return () => clearInterval(interval);
     }, []);
 
+    const prefetchIssues = () => {
+        getGlobalDowntimeClient(100, 3);
+    };
+
     if (loading) {
         return (
             <div className="px-3 py-1.5 text-xs font-medium rounded-full bg-muted text-muted-foreground animate-pulse">
@@ -40,6 +44,7 @@ export function IssuesBadge() {
     return (
         <Link
             href="/issues"
+            onMouseEnter={prefetchIssues}
             className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${hasIssues
                 ? 'bg-red-500/10 text-red-500 hover:bg-red-500/20 border border-red-500/20'
                 : 'bg-muted text-muted-foreground hover:bg-muted/80'
