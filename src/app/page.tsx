@@ -38,14 +38,12 @@ export default async function Home() {
   const latestStatus = await StatusMonitorService.getLatestStatus().catch(() => ({ services: [] }));
   const totalViews = await getTotalViews();
 
-  if (!latestStatus || !latestStatus.services || latestStatus.services.length === 0) {
-    return <ConnectionError />;
-  }
-
-  const upCount = latestStatus.services.filter((s: { status: string }) => s.status === 'up').length;
-  const totalCount = latestStatus.services.length;
-  const overallUptime = calculateOverallUptime(latestStatus.services);
-  const isSystemHealthy = upCount === totalCount;
+  // Calculate stats server-side
+  const services = latestStatus?.services || [];
+  const upCount = services.filter((s: { status: string }) => s.status === 'up').length;
+  const totalCount = services.length;
+  const overallUptime = calculateOverallUptime(services);
+  const isSystemHealthy = totalCount > 0 && upCount === totalCount;
 
   return (
     <div className="space-y-8">
@@ -98,9 +96,9 @@ export default async function Home() {
         </div>
       </div>
 
-      {/* Services List */}
+      {/* Services List - Client Side Fetching */}
       <Suspense fallback={<StatusSkeleton />}>
-        <StatusGrid services={latestStatus.services} />
+        <StatusGrid />
       </Suspense>
     </div>
   );

@@ -6,7 +6,7 @@ import { ShieldCheck, AlertCircle, Clock, ChevronDown, Loader2, History, ArrowRi
 import { format } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import { Button } from './ui/button';
-import { getRecentDowntimeAction } from '@/app/actions';
+import { getRecentDowntimeClient } from '@/lib/api-client';
 
 interface StatusCardProps {
     status: StatusCheck;
@@ -26,7 +26,7 @@ export function StatusCard({ status, isExpanded, onToggle }: StatusCardProps) {
             if (isExpanded && !logsLoaded && !loadingLogs) {
                 setLoadingLogs(true);
                 try {
-                    const logs = await getRecentDowntimeAction(status.service_name, 2);
+                    const logs = await getRecentDowntimeClient(status.service_name, 2);
                     setDowntimeLogs(logs);
                     setLogsLoaded(true);
                 } catch (error) {
@@ -50,8 +50,8 @@ export function StatusCard({ status, isExpanded, onToggle }: StatusCardProps) {
         <div className="w-full">
             <div
                 className={`bg-card text-card-foreground border rounded-lg p-3 transition-all flex flex-col sm:flex-row sm:items-center justify-between group cursor-pointer shadow-sm ${isExpanded
-                        ? 'border-primary ring-1 ring-primary shadow-md'
-                        : 'border-border hover:border-ring/50'
+                    ? 'border-primary ring-1 ring-primary shadow-md'
+                    : 'border-border hover:border-ring/50'
                     }`}
                 onClick={onToggle}
             >

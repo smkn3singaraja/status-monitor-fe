@@ -2,17 +2,36 @@
 
 import { StatusCheck } from '@/lib/types';
 import { StatusCard } from './status-card';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { ChevronUp } from 'lucide-react';
 import { groupAndSortServices } from '@/lib/utils';
+import { getLatestStatusClient } from '@/lib/api-client';
+import { ConnectionError } from '@/components/connection-error';
 
-interface StatusGridProps {
-    services: StatusCheck[];
-}
-
-export function StatusGrid({ services }: StatusGridProps) {
+export function StatusGrid() {
+    const [services, setServices] = useState<StatusCheck[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
     const [expandedServices, setExpandedServices] = useState<Set<string>>(new Set());
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const data = await getLatestStatusClient();
+                if (data && data.services) {
+                    setServices(data.services);
+                }
+            } catch (err) {
+                console.error('Failed to fetch status:', err);
+                setError(true);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     const toggleService = (serviceName: string) => {
         const newSet = new Set(expandedServices);
@@ -27,6 +46,20 @@ export function StatusGrid({ services }: StatusGridProps) {
     const collapseAll = () => {
         setExpandedServices(new Set());
     };
+
+    if (loading) {
+        return (
+            <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {[...Array(8)].map((_, i) => (
+                    <div key={i} className="h-32 bg-muted animate-pulse rounded-lg" />
+                ))}
+            </div>
+        );
+    }
+
+    if (error) {
+        return <ConnectionError />;
+    }
 
     if (services.length === 0) {
         return (
