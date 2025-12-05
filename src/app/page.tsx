@@ -32,28 +32,14 @@ function StatusSkeleton() {
   );
 }
 
-function ErrorDisplay() {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-[70vh] text-center">
-      <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
-        <svg className="w-6 h-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </div>
-      <h2 className="text-lg font-semibold text-foreground mb-2">Unable to Connect</h2>
-      <p className="text-sm text-muted-foreground max-w-sm">
-        Cannot reach the monitoring service. Please ensure the backend is running.
-      </p>
-    </div>
-  );
-}
+import { ConnectionError } from '@/components/connection-error';
 
 export default async function Home() {
   const latestStatus = await StatusMonitorService.getLatestStatus().catch(() => ({ services: [] }));
   const totalViews = await getTotalViews();
 
-  if (!latestStatus || latestStatus.services.length === 0) {
-    return <ErrorDisplay />;
+  if (!latestStatus || !latestStatus.services || latestStatus.services.length === 0) {
+    return <ConnectionError />;
   }
 
   const upCount = latestStatus.services.filter((s: { status: string }) => s.status === 'up').length;
